@@ -2,11 +2,14 @@ package org.commonjava;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.commonjava.collection.HashMapKeyList;
+import org.commonjava.collection.MapKeyList;
 
 public class PropertiesUtil {
 
@@ -22,13 +25,35 @@ public class PropertiesUtil {
 		}
 	}
 	
-	public static Map<String, String> loadMap(Properties p){
-		Map<String, String> map =new HashMap<String, String>();
+	public static void save(Properties p, String file){
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			p.store(out, null);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}finally{
+			try { if(out!=null) out.close(); } catch (IOException e) {throw new RuntimeException(e);}
+		}
+	}
+	
+	public static MapKeyList<String, String> loadMap(Properties p){
+		MapKeyList<String, String> map =new HashMapKeyList<String, String>();
 		Enumeration<?> e = p.propertyNames();
 		while(e.hasMoreElements()){
 			Object nextElement = e.nextElement();
 			map.put((String)nextElement, p.getProperty((String) nextElement));
 		}
 		return map;
+	}
+	
+	public static Properties load(Map<String, String> map){
+		Properties p = new Properties();
+		for (String item : map.keySet()) {
+			p.put(p, map.get(item));
+		}
+		return p;
 	}
 }
