@@ -3,9 +3,13 @@ package org.commonjava;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +48,30 @@ public class FileUtils {
 						try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
 					}
 				}else {
+					StringBuffer fileContent = new StringBuffer();
+					String fileContentString = null;
+					InputStreamReader in =null;
+					OutputStreamWriter out =null;
+					try {
+						in = new FileReader(itemFrom);
+						out = new FileWriter(itemTo);
+						
+						int charac;
+						while(true){
+							charac = in.read();
+							if(charac==-1) break;
+							fileContent.append((char) charac);
+						}
+						for (String key : replace.keySet()) {
+							fileContentString = fileContent.toString().replaceAll(key, replace.get(key));
+						}
+						out.write(fileContentString);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					} finally{
+						try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
+						try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
+					}
 				}
 			}
 		}
