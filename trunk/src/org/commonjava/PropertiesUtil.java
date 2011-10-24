@@ -2,8 +2,9 @@ package org.commonjava;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -26,10 +27,10 @@ public class PropertiesUtil {
 	}
 	
 	public static void save(Properties p, String file){
-		FileOutputStream out = null;
+		Writer out = null;
 		try {
-			out = new FileOutputStream(file);
-			p.store(out, null);
+			out = new FileWriter(file);
+			p.store(out, "");
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -52,7 +53,7 @@ public class PropertiesUtil {
 	public static Properties load(Map<String, String> map){
 		Properties p = new Properties();
 		for (String item : map.keySet()) {
-			p.put(p, map.get(item));
+			p.put(item, map.get(item));
 		}
 		return p;
 	}
