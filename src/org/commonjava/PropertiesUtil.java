@@ -30,7 +30,7 @@ public class PropertiesUtil {
 		Writer out = null;
 		try {
 			out = new FileWriter(file);
-			p.store(out, "");
+			p.store(out, null);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
