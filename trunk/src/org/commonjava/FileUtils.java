@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class FileUtils {
 
-	public static void copyDir(String from, String to, Map<String, String> replace, List<String> fileTypes){
+	public static void copyDir(String from, String to, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName){
 		File fileFrom 	= new File(from);
 		File fileTo 	= new File(to);
 		
@@ -24,12 +24,16 @@ public class FileUtils {
 		if(!fileTo.exists()) fileTo.mkdir();
 		
 		for (File itemFrom : fileFrom.listFiles()) {
-			File itemTo = new File(to, itemFrom.getName());
+			File itemTo = null;
+			if(replaceFileName.keySet().contains(itemFrom.getName())) 	itemTo = new File(to, replaceFileName.get(itemFrom.getName()));
+			else														itemTo = new File(to, itemFrom.getName());
+			
 			String path = itemFrom.getAbsolutePath();
 			if(itemFrom.isDirectory()){
-				copyDir(path, itemTo.getAbsolutePath(), replace, fileTypes);
+				copyDir(path, itemTo.getAbsolutePath(), replace, fileTypes, replaceFileName);
 			}else{
-				if(replace.isEmpty() || !itemFrom.getName().contains(".") || !fileTypes.contains(path.substring(path.indexOf("."), path.length()))){
+				String substring = path.substring(path.lastIndexOf(".")+1, path.length());
+				if(replace.isEmpty() || !itemFrom.getName().contains(".") || !fileTypes.contains(substring)){
 					InputStream in =null;
 					OutputStream out =null;
 					try {
@@ -62,8 +66,9 @@ public class FileUtils {
 							if(charac==-1) break;
 							fileContent.append((char) charac);
 						}
+						fileContentString = fileContent.toString();
 						for (String key : replace.keySet()) {
-							fileContentString = fileContent.toString().replaceAll(key, replace.get(key));
+							fileContentString = fileContentString.replaceAll(key, replace.get(key));
 						}
 						out.write(fileContentString);
 					} catch (IOException e) {
