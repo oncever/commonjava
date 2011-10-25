@@ -64,7 +64,13 @@ public class FileUtils {
 	}
 
 	public static String getSufix(String path) {
+		if(!path.contains(".")) return "";
 		String substring = path.substring(path.lastIndexOf(".")+1, path.length());
+		return substring;
+	}
+	public static String getPrefix(String path) {
+		if(!path.contains(".")) return path;
+		String substring = path.substring(0, path.lastIndexOf("."));
 		return substring;
 	}
 	
@@ -72,12 +78,14 @@ public class FileUtils {
 		return listChilds(from, new ArrayList<File>(), filter);
 	}
 	private static List<File> listChilds(File file, List<File> files, FileFilter filter){
-		for (File item :file.listFiles()) {
-			if(filter.accept(item)){
-				files.add(item);
-				listChilds(item, files, filter);
+		File[] listFiles = file.listFiles();
+		if(listFiles!=null)
+			for (File item :listFiles) {
+				if(filter.accept(item)){
+					files.add(item);
+					listChilds(item, files, filter);
+				}
 			}
-		}
 		return files;
 	}
 	
@@ -108,7 +116,7 @@ public class FileUtils {
 	public static String readAsString(InputStream stream, String charset) {
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new InputStreamReader(stream, charset));
+			in = new BufferedReader(charset==null?new InputStreamReader(stream):new InputStreamReader(stream, charset));
 			String line = null;
 			StringBuffer strBuffer = new StringBuffer();
 			while ((line = in.readLine()) != null) {
