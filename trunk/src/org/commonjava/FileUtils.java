@@ -150,10 +150,10 @@ public class FileUtils {
 	public static void writeAsString(OutputStream stream, String content, String charset){
 		OutputStreamWriter writer = null;
 		try {
-			writer = new OutputStreamWriter(stream, charset);
+			writer = charset==null?new OutputStreamWriter(stream):new OutputStreamWriter(stream, charset);
 			writer.write(content);
 			writer.flush();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try { if(writer!=null) writer.close(); } catch (IOException e) {throw new RuntimeException(e);}
