@@ -17,71 +17,77 @@ import java.util.Map;
 
 public class FileUtils {
 
-	public static void copyDir(String from, String to, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName){
+	public static void copy(String from, String to, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName){
 		File fileFrom 	= new File(from);
 		File fileTo 	= new File(to);
 		
-		if(!fileFrom.exists()) throw new RuntimeException("O diretório "+from+" não existe");
-		if(fileTo.exists() && fileTo.isFile()) throw new RuntimeException("O diretório "+from+" não pode ser criado porque um arquivo com esse nome já existe");
-		if(!fileTo.exists()) fileTo.mkdir();
+		if(!fileFrom.exists()) throw new RuntimeException("O arquivo "+from+" não existe");
+		if(fileTo.exists()){
+			if(fileFrom.isDirectory() && fileTo.isFile()) throw new RuntimeException("O diretório "+to+" não pode ser criado porque um arquivo com esse nome já existe");
+			if(fileFrom.isFile() && fileTo.isDirectory()) throw new RuntimeException("O arquivo "+to+" não pode ser criado porque um diretorio com esse nome já existe");
+		}
 		
-		for (File itemFrom : fileFrom.listFiles()) {
-			File itemTo = null;
-			if(replaceFileName.keySet().contains(itemFrom.getName())) 	itemTo = new File(to, replaceFileName.get(itemFrom.getName()));
-			else														itemTo = new File(to, itemFrom.getName());
-			
-			String path = itemFrom.getAbsolutePath();
-			if(itemFrom.isDirectory()){
-				copyDir(path, itemTo.getAbsolutePath(), replace, fileTypes, replaceFileName);
-			}else{
-				String substring = path.substring(path.lastIndexOf(".")+1, path.length());
-				if(replace.isEmpty() || !itemFrom.getName().contains(".") || !fileTypes.contains(substring)){
-					InputStream in =null;
-					OutputStream out =null;
-					try {
-						in = new FileInputStream(itemFrom);
-						out = new FileOutputStream(itemTo);
-						
-						byte[] buf = new byte[1024];
-						int len;
-						while ((len = in.read(buf)) > 0){
-							out.write(buf, 0, len);
-						}
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					} finally{
-						try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
-						try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
+		if(fileFrom.isDirectory()){
+			if(!fileTo.exists()) fileTo.mkdir();
+			for (File itemFrom : fileFrom.listFiles()) {
+				File itemTo = null;
+				if(replaceFileName.keySet().contains(itemFrom.getName())) 	itemTo = new File(to, replaceFileName.get(itemFrom.getName()));
+				else														itemTo = new File(to, itemFrom.getName());
+				copy(itemFrom.getAbsolutePath(), itemTo.getAbsolutePath(), replace, fileTypes, replaceFileName);
+			}
+		}else {
+			String sufix = getSufix(fileFrom.getAbsolutePath());
+			if(replace.isEmpty() || !fileFrom.getName().contains(".") || !fileTypes.contains(sufix)){
+				InputStream in =null;
+				OutputStream out =null;
+				try {
+					in = new FileInputStream(fileFrom);
+					out = new FileOutputStream(fileTo);
+					
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = in.read(buf)) > 0){
+						out.write(buf, 0, len);
 					}
-				}else {
-					StringBuffer fileContent = new StringBuffer();
-					String fileContentString = null;
-					InputStreamReader in =null;
-					OutputStreamWriter out =null;
-					try {
-						in = new FileReader(itemFrom);
-						out = new FileWriter(itemTo);
-						
-						int charac;
-						while(true){
-							charac = in.read();
-							if(charac==-1) break;
-							fileContent.append((char) charac);
-						}
-						fileContentString = fileContent.toString();
-						for (String key : replace.keySet()) {
-							fileContentString = fileContentString.replaceAll(key, replace.get(key));
-						}
-						out.write(fileContentString);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					} finally{
-						try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
-						try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally{
+					try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
+					try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
+				}
+			}else {
+				StringBuffer fileContent = new StringBuffer();
+				String fileContentString = null;
+				InputStreamReader in =null;
+				OutputStreamWriter out =null;
+				try {
+					in = new FileReader(fileFrom);
+					out = new FileWriter(fileTo);
+					
+					int charac;
+					while(true){
+						charac = in.read();
+						if(charac==-1) break;
+						fileContent.append((char) charac);
 					}
+					fileContentString = fileContent.toString();
+					for (String key : replace.keySet()) {
+						fileContentString = fileContentString.replaceAll(key, replace.get(key));
+					}
+					out.write(fileContentString);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally{
+					try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
+					try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
 				}
 			}
 		}
+	}
+
+	private static String getSufix(String path) {
+		String substring = path.substring(path.lastIndexOf(".")+1, path.length());
+		return substring;
 	}
 	
 	public static List<File> listChilds(File from, FileFilter filter){
