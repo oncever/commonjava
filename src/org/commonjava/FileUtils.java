@@ -1,6 +1,7 @@
 package org.commonjava;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +82,19 @@ public class FileUtils {
 				}
 			}
 		}
+	}
+	
+	public static List<File> listChilds(File from, FileFilter filter){
+		return listChilds(from, new ArrayList<File>(), filter);
+	}
+	private static List<File> listChilds(File file, List<File> files, FileFilter filter){
+		for (File item :file.listFiles()) {
+			if(filter.accept(item)){
+				files.add(item);
+				listChilds(item, files, filter);
+			}
+		}
+		return files;
 	}
 	
 	public static void copyExtruture(String from, String to){
