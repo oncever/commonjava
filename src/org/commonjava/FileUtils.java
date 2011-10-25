@@ -1,11 +1,10 @@
 package org.commonjava;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,36 +55,15 @@ public class FileUtils {
 					try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
 				}
 			}else {
-				StringBuffer fileContent = new StringBuffer();
-				String fileContentString = null;
-				InputStreamReader in =null;
-				OutputStreamWriter out =null;
-				try {
-					in = new FileReader(fileFrom);
-					out = new FileWriter(fileTo);
-					
-					int charac;
-					while(true){
-						charac = in.read();
-						if(charac==-1) break;
-						fileContent.append((char) charac);
-					}
-					fileContentString = fileContent.toString();
-					for (String key : replace.keySet()) {
-						fileContentString = fileContentString.replaceAll(key, replace.get(key));
-					}
-					out.write(fileContentString);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				} finally{
-					try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
-					try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
-				}
+				String conteudo = readFileAsString(fileFrom);
+				for (String key : replace.keySet())
+					conteudo = conteudo.replaceAll(key, replace.get(key));
+				writeFileAsString(fileTo, conteudo);
 			}
 		}
 	}
 
-	private static String getSufix(String path) {
+	public static String getSufix(String path) {
 		String substring = path.substring(path.lastIndexOf(".")+1, path.length());
 		return substring;
 	}
@@ -110,6 +88,67 @@ public class FileUtils {
 				itemTo.mkdir();
 				copyExtruture(itemFrom.getAbsolutePath(), itemTo.getAbsolutePath());
 			}
+		}
+	}
+	
+	
+	
+	public static String readFileAsString(File file) {
+		return readFileAsString(file, null);
+	}
+
+	public static String readFileAsString(File file, String charset) {
+		try {
+			return readAsString(new FileInputStream(file), charset);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static String readAsString(InputStream stream, String charset) {
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new InputStreamReader(stream, charset));
+			String line = null;
+			StringBuffer strBuffer = new StringBuffer();
+			while ((line = in.readLine()) != null) {
+				strBuffer.append(line);
+				strBuffer.append("\r\n");
+			}
+			String contentStr = strBuffer.toString();
+			return contentStr;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}finally{
+			try { if(in!=null) in.close(); } catch (IOException e) {throw new RuntimeException(e);}
+		}
+	}
+	
+	public static void writeFileAsString(File file, String content) {
+		try {
+			writeAsString(new FileOutputStream(file), content, null);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	public static void writeFileAsString(File file, String content, String charset) {
+		try {
+			writeAsString(new FileOutputStream(file), content, charset);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static void writeAsString(OutputStream stream, String content, String charset){
+		OutputStreamWriter writer = null;
+		try {
+			writer = new OutputStreamWriter(stream, charset);
+			writer.write(content);
+			writer.flush();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			try { if(writer!=null) writer.close(); } catch (IOException e) {throw new RuntimeException(e);}
 		}
 	}
 }
