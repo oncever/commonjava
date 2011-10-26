@@ -1,5 +1,7 @@
 package org.commonjava;
 
+import java.util.Map;
+
 public class StringUtils {
 	
 	public static String firstUpper(String a){
@@ -13,6 +15,11 @@ public class StringUtils {
 		if(a.isEmpty()) return a;
 		if(a.length()==1) return a.toLowerCase();
 		return a.substring(0,1).toLowerCase()+a.substring(a.length()-1);
+	}
+	public static String replaceAll(String a, Map<String, String> map){
+		for (String key : map.keySet())
+			a = a.replaceAll(key, map.get(key));
+		return a;
 	}
 
 }
