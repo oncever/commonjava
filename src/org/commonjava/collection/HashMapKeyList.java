@@ -45,6 +45,11 @@ public class HashMapKeyList<T, R> extends HashMap<T, R> implements MapKeyList<T,
 		return super.remove(key);
 	}
 	
+	@Override
+	public void clear() {
+		super.clear();
+		keyList.clear();
+	}
 	/**
 	 * @return As chaves do Map na ordem em que foram adicionadas
 	 */

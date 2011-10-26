@@ -55,10 +55,7 @@ public class FileUtils {
 					try { if(out!=null) out.close();} catch (IOException e) {throw new RuntimeException(e);}
 				}
 			}else {
-				String conteudo = readFileAsString(fileFrom);
-				for (String key : replace.keySet())
-					conteudo = conteudo.replaceAll(key, replace.get(key));
-				writeFileAsString(fileTo, conteudo);
+				writeFileAsString(fileTo, StringUtils.replaceAll(readFileAsString(fileFrom), replace));
 			}
 		}
 	}
