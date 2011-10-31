@@ -15,6 +15,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.commonjava.UIUtils;
+
 /**
  * 
  * @author Jean
@@ -32,7 +34,7 @@ public class CriptoUtilGUI extends JFrame{
 	
 	public CriptoUtilGUI() {
 		super("Criptografia");
-		SwingUtil.configureSwingOSLookAndFeel();
+		UIUtils.configureSystemLookAndFeel();
 		setSize(500, 500);
 		setContentPane(new JPanel());
 		getContentPane().setLayout(new BorderLayout());
