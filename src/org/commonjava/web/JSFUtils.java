@@ -43,6 +43,15 @@ public class JSFUtils {
 		return (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> T getApplicationAttribute(String name) {
+		return (T) getServletContext().getAttribute(name);
+	}
+
+	public static void setApplicationAttribute(String name, Object value) {
+		getServletContext().setAttribute(name, value);
+	}
+	
 	public static void executeEL(String el) {
 		FacesContext context   = FacesContext.getCurrentInstance();
 		Application  facesApp  = context.getApplication();
