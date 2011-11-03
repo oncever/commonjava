@@ -25,13 +25,21 @@ public class ExceptionHandler extends ActionListenerImpl {
 		}
 	}
 	
-	public static void showAllExceptionMessages(Exception e) {
+	public void showAllExceptionMessages(Exception e) {
 		e.printStackTrace();
 
 		Throwable cause = e;
 		while(cause !=null && !(cause instanceof UserException)) cause = cause.getCause();
 		
 		if(cause!=null)	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, cause.getMessage(), null));
-		else			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um erro ao tentar executar ação", null));
+		else{
+			//TODO internacionalizar
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um erro ao tentar executar ação", null));
+			logUnexpectedError(e);
+		}
+	}
+
+	protected void logUnexpectedError(Exception e) {
+		
 	}
 }
