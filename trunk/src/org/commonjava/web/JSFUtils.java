@@ -9,6 +9,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class JSFUtils {
 
@@ -41,6 +42,11 @@ public class JSFUtils {
 	
 	public static ServletContext getServletContext() {
 		return (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+	}
+	
+	public static HttpSession getSession(boolean create) {
+		HttpServletRequest request = getRequest();
+		return request.getSession(create);
 	}
 	
 	@SuppressWarnings("unchecked")
