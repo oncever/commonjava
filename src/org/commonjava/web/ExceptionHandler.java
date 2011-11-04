@@ -60,10 +60,13 @@ public class ExceptionHandler extends ActionListenerImpl {
 		{
 			// logando informações adicionais preenchidas no web.xml
 			String initParameter = JSFUtils.getServletContext().getInitParameter(ADDITIONAL_LOGS);
-			for (String item: initParameter.split(";")) {
-				String[] nomeValor = StringUtils.splitOnFirst(item,"=");
-				map.put(nomeValor[0], JSFUtils.getELValue(nomeValor[1]));
-			}
+			if(initParameter!=null)
+				for (String item: initParameter.split(";")) {
+					String[] nomeValor = StringUtils.splitOnFirst(item,"=");
+					map.put(nomeValor[0], JSFUtils.getELValue(nomeValor[1]));
+				}
 		}
+		
+		list.add(map);
 	}
 }
