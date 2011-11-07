@@ -73,4 +73,14 @@ public class JSFUtils {
 		ExternalContext externalContext = context.getExternalContext();
 		return (HttpServletRequest) externalContext.getRequest();
 	}
+	
+	public static Integer getIntRequestParam(String name) {
+		String parameter = getRequest().getParameter(name);
+		if(parameter==null||parameter.isEmpty()) return null;
+		return Integer.valueOf(parameter);
+	}
+	
+	public static String getRequestParam(String name) {
+		return getRequest().getParameter(name);
+	}
 }
