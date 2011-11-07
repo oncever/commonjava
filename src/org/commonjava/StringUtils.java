@@ -81,5 +81,21 @@ public class StringUtils {
 		}
 		return text;
 	}
+	
+	public static String convertToLabel(String text) {
+		Matcher m = Pattern.compile("([a-z][A-Z])").matcher(text);
+		m.reset();
+		boolean result = m.find();
+		if (result) {
+			StringBuffer sb = new StringBuffer();
+			do {
+				m.appendReplacement(sb, m.group(1).charAt(0)+" "+m.group(1).charAt(1));
+				result = m.find();
+			} while (result);
+			m.appendTail(sb);
+			return sb.toString();
+		}
+		return text;
+	}
 
 }
