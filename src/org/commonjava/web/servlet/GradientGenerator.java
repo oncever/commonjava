@@ -40,8 +40,6 @@ public class GradientGenerator extends HttpServlet{
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
-		super.doGet(req, resp);
 	}
 
 	private static Color cor(String hex) {
