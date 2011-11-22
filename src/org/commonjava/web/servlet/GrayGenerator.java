@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-public class WatermarkGenerator extends HttpServlet{
+public class GrayGenerator extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,9 +21,8 @@ public class WatermarkGenerator extends HttpServlet{
 		
 		String pathInfo = req.getPathInfo();
 		String[] split = pathInfo.split("/");
-		Color c = cor(split[1]);
-		String image = split[2];
-		for (int i = 3; i < split.length; i++) image+="/"+split[i];
+		String image = split[1];
+		for (int i = 2; i < split.length; i++) image+="/"+split[i];
 		
 		GenericResponseWrapper respW = new GenericResponseWrapper(resp);
 		req.getRequestDispatcher("/"+folder+"/"+image).forward(req, respW);
@@ -38,16 +37,11 @@ public class WatermarkGenerator extends HttpServlet{
 				int rgb = read.getRGB(i, j);
 				Color color = new Color(rgb, true);
 				int alpha 	= color.getAlpha();
-				int red 	= color.getRed()+c.getRed();
-				int blue 	= color.getBlue()+c.getBlue();
-				int green 	= color.getGreen()+c.getGreen();
-				if(red 	<0) red  =0;
-				if(blue <0) blue =0;
-				if(green<0) green=0;
-				if(red 	>255) red  =255;
-				if(blue >255) blue =255;
-				if(green>255) green=255;
-				bufferedImage.setRGB(i, j, new Color(red, green, blue, alpha).getRGB());
+				int red 	= color.getRed();
+				int blue 	= color.getBlue();
+				int green 	= color.getGreen();
+				int media = red+blue+green/3;
+				bufferedImage.setRGB(i, j, new Color(media, media, media, alpha).getRGB());
 			}
 		}
 		
@@ -60,17 +54,5 @@ public class WatermarkGenerator extends HttpServlet{
 		resp.getOutputStream().write(byteArray);
 		resp.getOutputStream().flush();
 		resp.getOutputStream().close();
-	}
-
-	private static Color cor(String hex) {
-		try {
-			int h1 = Integer.parseInt(hex.substring(0,2), 16);
-			int h2 = Integer.parseInt(hex.substring(2,4), 16);
-			int h3 = Integer.parseInt(hex.substring(4,6), 16);
-			Color color = new Color(h1, h2, h3, 255);
-			return color;
-		} catch (Exception e) {
-			throw new RuntimeException("Cor: "+hex, e);
-		}
 	}
 }
