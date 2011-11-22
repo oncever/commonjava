@@ -17,29 +17,27 @@ public class GradientGenerator extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		try {
-			int w = Integer.parseInt(req.getParameter("w"));
-			int h = Integer.parseInt(req.getParameter("h"));
-			Color c1 = cor(req.getParameter("c1"));
-			Color c2 = cor(req.getParameter("c2"));
+		String pathInfo = req.getPathInfo();
+		String[] split = pathInfo.split("/");
+		int w = Integer.parseInt(split[1]);
+		int h = Integer.parseInt(split[2]);
+		Color c1 = cor(split[3]);
+		Color c2 = cor(split[4]);
+	
+		BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = (Graphics2D)(Graphics2D) bufferedImage.getGraphics();
+		GradientPaint gradient = new GradientPaint(0,0,c1,w,h,c2,true);
+		g2d.setPaint(gradient);
+		g2d.fillRect(0,0,w,h);
+		Color s2 = Color.yellow;
+		Color e1 = Color.pink;
+		GradientPaint gradient1 = new GradientPaint(10,10,s2,30,30,e1,true);
+		g2d.setPaint(gradient1);
+		g2d.fillRect(99,99,199,119);
 		
-			BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g2d = (Graphics2D)(Graphics2D) bufferedImage.getGraphics();
-			GradientPaint gradient = new GradientPaint(0,0,c1,w,h,c2,true);
-			g2d.setPaint(gradient);
-			g2d.fillRect(0,0,w,h);
-			Color s2 = Color.yellow;
-			Color e1 = Color.pink;
-			GradientPaint gradient1 = new GradientPaint(10,10,s2,30,30,e1,true);
-			g2d.setPaint(gradient1);
-			g2d.fillRect(99,99,199,119);
-			
-			ImageIO.write(bufferedImage, "png", resp.getOutputStream());
-			resp.getOutputStream().flush();
-			resp.getOutputStream().close();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		ImageIO.write(bufferedImage, "png", resp.getOutputStream());
+		resp.getOutputStream().flush();
+		resp.getOutputStream().close();
 	}
 
 	private static Color cor(String hex) {
