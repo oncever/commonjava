@@ -9,6 +9,9 @@ import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.ServletContext;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.PageContext;
 
 import org.commonjava.StringUtils;
 import org.commonjava.exception.UserException;
@@ -34,8 +37,6 @@ public class ExceptionHandler extends ActionListenerImpl {
 	}
 	
 	public void showAllExceptionMessages(Exception e) {
-		e.printStackTrace();
-
 		Throwable cause = e;
 		while(cause !=null && !(cause instanceof UserException)) cause = cause.getCause();
 		
@@ -43,30 +44,49 @@ public class ExceptionHandler extends ActionListenerImpl {
 		else{
 			//TODO internacionalizar
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um erro ao tentar executar ação", null));
-			logUnexpectedError(e);
+			e.printStackTrace();
+			logUnexpectedError(e, JSFUtils.getServletContext() ,jsfParams());
 		}
 	}
 
-	protected void logUnexpectedError(Exception e) {
-		List<Map<String, Object>> list = JSFUtils.getApplicationAttribute(EXCEPTIONS);
+	@SuppressWarnings("unchecked")
+	public static void logUnexpectedError(Exception e, ServletContext context, Map<String, Object> params) {
+		List<Map<String, Object>> list = (List<Map<String, Object>>) context.getAttribute(EXCEPTIONS);
 		if(list==null){
 			list = new ArrayList<Map<String,Object>>();
-			JSFUtils.setApplicationAttribute(EXCEPTIONS, list);
+			context.setAttribute(EXCEPTIONS, list);
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("date"		, new Date());
 		map.put("exception"	, e);
 		
-		{
-			// logando informações adicionais preenchidas no web.xml
-			String initParameter = JSFUtils.getServletContext().getInitParameter(ADDITIONAL_LOGS);
-			if(initParameter!=null)
-				for (String item: initParameter.split(";")) {
-					String[] nomeValor = StringUtils.splitOnFirst(item,"=");
-					map.put(nomeValor[0], JSFUtils.getELValue(nomeValor[1]));
-				}
-		}
+		// adiciona parametros a mais
+		map.putAll(params);
 		
 		list.add(map);
+	}
+
+	public static Map<String, Object> jsfParams() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		// logando informações adicionais preenchidas no web.xml
+		String initParameter = JSFUtils.getServletContext().getInitParameter(ADDITIONAL_LOGS);
+		if(initParameter!=null)
+			for (String item: initParameter.split(";")) {
+				String[] nomeValor = StringUtils.splitOnFirst(item,"=");
+				map.put(nomeValor[0], JSFUtils.getELValue(nomeValor[1]));
+			}
+		return map;
+	}
+	
+	public static Map<String, Object> jspParams(ServletContext sc, JspApplicationContext jspAppCtx, PageContext pageContext) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		// logando informações adicionais preenchidas no web.xml
+		String initParameter = (String) sc.getAttribute(ADDITIONAL_LOGS);
+		if(initParameter!=null)
+			for (String item: initParameter.split(";")) {
+				String[] nomeValor = StringUtils.splitOnFirst(item,"=");
+				map.put(nomeValor[0], JSPUtils.getELValue(nomeValor[1], jspAppCtx, pageContext));
+			}
+		return map;
 	}
 }
