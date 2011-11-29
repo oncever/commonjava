@@ -30,7 +30,7 @@ public class StringUtils {
 		if(a==null) return null;
 		int indexOf = a.indexOf(split);
 		if(a.isEmpty()||a.length()==1||indexOf==-1) return new String[]{a};
-		return new String[]{a.substring(0, indexOf), a.substring(indexOf, a.length())};
+		return new String[]{a.substring(0, indexOf), a.substring(indexOf+1, a.length())};
 	}
 	
 	/**
