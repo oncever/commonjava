@@ -50,7 +50,7 @@ public class ExceptionHandler extends ActionListenerImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void logUnexpectedError(Exception e, ServletContext context, Map<String, Object> params) {
+	public static void logUnexpectedError(Throwable e, ServletContext context, Map<String, Object> params) {
 		List<Map<String, Object>> list = (List<Map<String, Object>>) context.getAttribute(EXCEPTIONS);
 		if(list==null){
 			list = new ArrayList<Map<String,Object>>();
