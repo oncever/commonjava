@@ -46,6 +46,7 @@ public class ResizeImagem extends HttpServlet{
 		baos.close();
 		byte[] byteArray = baos.toByteArray();		
 		
+		resp.setContentType(respW.getContentType());
 		resp.setContentLength(byteArray .length);
 		resp.getOutputStream().write(byteArray);
 		resp.getOutputStream().flush();

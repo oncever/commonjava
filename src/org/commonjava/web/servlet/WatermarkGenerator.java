@@ -30,7 +30,7 @@ public class WatermarkGenerator extends HttpServlet{
 		req.getRequestDispatcher(dispatcherString).forward(req, respW);
 		byte[] data = respW.getData();
 		
-		if(data.length==0) throw new RuntimeException("Array tem tamanho ZERO!");
+		if(data.length==0) throw new RuntimeException("Array tem tamanho ZERO para a url: "+dispatcherString);
 		
 		ByteArrayInputStream input = new ByteArrayInputStream(data);
 		BufferedImage read = ImageIO.read(input);
@@ -60,6 +60,7 @@ public class WatermarkGenerator extends HttpServlet{
 		baos.close();
 		byte[] byteArray = baos.toByteArray();	
 		
+		resp.setContentType(respW.getContentType());
 		resp.setContentLength(byteArray .length);
 		resp.getOutputStream().write(byteArray);
 		resp.getOutputStream().flush();
