@@ -29,13 +29,14 @@ public class ResizeImagem extends HttpServlet{
 		for (int i = 4; i < split.length; i++) image+="/"+split[i];
 		
 		GenericResponseWrapper respW = new GenericResponseWrapper(resp);
-		req.getRequestDispatcher("/"+folder+"/"+image).forward(req, respW);
+		String dispatcherString = "/"+folder+"/"+image;
+		req.getRequestDispatcher(dispatcherString).forward(req, respW);
 		byte[] data = respW.getData();
 		ByteArrayInputStream input = new ByteArrayInputStream(data);
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
-		
+		if(read==null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula!");
 		BufferedImage bufferedImage = resizeImageWithHint(read, w, h);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -25,12 +25,14 @@ public class GrayGenerator extends HttpServlet{
 		for (int i = 2; i < split.length; i++) image+="/"+split[i];
 		
 		GenericResponseWrapper respW = new GenericResponseWrapper(resp);
-		req.getRequestDispatcher("/"+folder+"/"+image).forward(req, respW);
+		String dispatcherString = "/"+folder+"/"+image;
+		req.getRequestDispatcher(dispatcherString).forward(req, respW);
 		byte[] data = respW.getData();
 		ByteArrayInputStream input = new ByteArrayInputStream(data);
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
+		if(read==null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula!");
 		BufferedImage bufferedImage = new BufferedImage(read.getWidth(), read.getHeight(), read.getType());
 		for (int i = 0; i < read.getWidth(); i++) {
 			for (int j = 0; j < read.getHeight(); j++) {
