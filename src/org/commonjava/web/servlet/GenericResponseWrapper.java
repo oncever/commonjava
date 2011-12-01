@@ -1,6 +1,7 @@
 package org.commonjava.web.servlet;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletOutputStream;
@@ -8,16 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 public class GenericResponseWrapper extends HttpServletResponseWrapper { 
-  private ByteArrayOutputStream output;
+  private ByteArrayOutputStream output =new ByteArrayOutputStream();
   private int contentLength;
   private String contentType;
  
   public GenericResponseWrapper(HttpServletResponse response) { 
     super(response);
-    output=new ByteArrayOutputStream();
   } 
  
   public byte[] getData() { 
+	try {
+		output.flush();
+		output.close();
+	} catch (IOException e) {
+		throw new RuntimeException(e);
+	}
     return output.toByteArray(); 
   } 
  
