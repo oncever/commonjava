@@ -37,7 +37,7 @@ public class WatermarkGenerator extends HttpServlet{
 		if(read==null){
 			File file = new File(getServletContext().getRealPath(dispatcherString));
 			if(file.exists()){
-				if(data!=null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe e o array de bytes NAO é nulo: "+file.getAbsolutePath());
+				if(data!=null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe e o array de bytes NAO é nulo. Tamanho array: "+data.length+". Arquivo: "+file.getAbsolutePath());
 				else			throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe e o array de bytes é nulo: "+file.getAbsolutePath());
 			}
 			else				throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, e o arquivo NÃO existe: "+file.getAbsolutePath());
