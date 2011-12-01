@@ -16,7 +16,11 @@ import java.util.Map;
 
 public class FileUtils {
 
-	public static void copy(String from, String to, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName){
+        public static void copy(String from, String to, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName) {
+    		copy(from, to, null, replace, fileTypes, replaceFileName);
+        }
+        
+	public static void copy(String from, String to, FileFilter filter, Map<String, String> replace, List<String> fileTypes, Map<String, String> replaceFileName){
 		File fileFrom 	= new File(from);
 		File fileTo 	= new File(to);
 		
@@ -28,7 +32,7 @@ public class FileUtils {
 		
 		if(fileFrom.isDirectory()){
 			if(!fileTo.exists()) fileTo.mkdir();
-			for (File itemFrom : fileFrom.listFiles()) {
+			for (File itemFrom : fileFrom.listFiles(filter)) {
 				File itemTo = null;
 				if(replaceFileName.keySet().contains(itemFrom.getName())) 	itemTo = new File(to, replaceFileName.get(itemFrom.getName()));
 				else														itemTo = new File(to, itemFrom.getName());
