@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -32,7 +33,11 @@ public class GrayGenerator extends HttpServlet{
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
-		if(read==null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula!");
+		if(read==null){
+			File file = new File(getServletContext().getRealPath(dispatcherString));
+			if(file.exists()) 	throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe: "+file.getAbsolutePath());
+			else				throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, e o arquivo NÃO existe: "+file.getAbsolutePath());
+		}
 		BufferedImage bufferedImage = new BufferedImage(read.getWidth(), read.getHeight(), read.getType());
 		for (int i = 0; i < read.getWidth(); i++) {
 			for (int j = 0; j < read.getHeight(); j++) {
