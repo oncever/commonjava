@@ -6,7 +6,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -33,15 +32,13 @@ public class ResizeImagem extends HttpServlet{
 		String dispatcherString = "/"+folder+"/"+image;
 		req.getRequestDispatcher(dispatcherString).forward(req, respW);
 		byte[] data = respW.getData();
+		
+		if(data.length==0) throw new RuntimeException("Array tem tamanho ZERO!");
+		
 		ByteArrayInputStream input = new ByteArrayInputStream(data);
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
-		if(read==null){
-			File file = new File(getServletContext().getRealPath(dispatcherString));
-			if(file.exists()) 	throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe: "+file.getAbsolutePath());
-			else				throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, e o arquivo NÃO existe: "+file.getAbsolutePath());
-		}
 		BufferedImage bufferedImage = resizeImageWithHint(read, w, h);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
