@@ -30,18 +30,13 @@ public class WatermarkGenerator extends HttpServlet{
 		String dispatcherString = "/"+folder+"/"+image;
 		req.getRequestDispatcher(dispatcherString).forward(req, respW);
 		byte[] data = respW.getData();
+		
+		if(data.length==0) throw new RuntimeException("Array tem tamanho ZERO!");
+		
 		ByteArrayInputStream input = new ByteArrayInputStream(data);
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
-		if(read==null){
-			File file = new File(getServletContext().getRealPath(dispatcherString));
-			if(file.exists()){
-				if(data!=null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe e o array de bytes NAO é nulo. Tamanho array: "+data.length+". Arquivo: "+file.getAbsolutePath());
-				else			throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe e o array de bytes é nulo: "+file.getAbsolutePath());
-			}
-			else				throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, e o arquivo NÃO existe: "+file.getAbsolutePath());
-		}
 		BufferedImage bufferedImage = new BufferedImage(read.getWidth(), read.getHeight(), read.getType());
 		for (int i = 0; i < read.getWidth(); i++) {
 			for (int j = 0; j < read.getHeight(); j++) {
