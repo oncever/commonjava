@@ -6,6 +6,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -36,7 +37,11 @@ public class ResizeImagem extends HttpServlet{
 		BufferedImage read = ImageIO.read(input);
 		input.close();
 		
-		if(read==null) throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula!");
+		if(read==null){
+			File file = new File(getServletContext().getRealPath(dispatcherString));
+			if(file.exists()) 	throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, mas o arquivo existe: "+file.getAbsolutePath());
+			else				throw new NullPointerException("Imagem lida de "+dispatcherString+" é nula, e o arquivo NÃO existe: "+file.getAbsolutePath());
+		}
 		BufferedImage bufferedImage = resizeImageWithHint(read, w, h);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
