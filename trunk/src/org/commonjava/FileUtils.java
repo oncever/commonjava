@@ -32,7 +32,8 @@ public class FileUtils {
 		
 		if(fileFrom.isDirectory()){
 			if(!fileTo.exists()) fileTo.mkdir();
-			for (File itemFrom : fileFrom.listFiles(filter)) {
+			File[] listFiles = fileFrom.listFiles(filter);
+			for (File itemFrom : listFiles) {
 				File itemTo = null;
 				if(replaceFileName.keySet().contains(itemFrom.getName())) 	itemTo = new File(to, replaceFileName.get(itemFrom.getName()));
 				else														itemTo = new File(to, itemFrom.getName());
