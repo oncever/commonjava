@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CommonJava" default="5 - business.deploy">
+	
+
+	<property file="build.properties" />
+
+	<path id="server-libs">
+		<fileset dir="${jboss.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${jboss.web.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+
+<!--###############################################################################
+	#                                                                             #
+	#                                  BUSINESS                                   #
+	#                                                                             #
+	###############################################################################-->
+
+	<target name="1 - business.clear">
+		<echo>Apagando os diretórios da business</echo>
+		<delete dir="bin" />
+		<delete dir="dist" />
+	</target>
+
+	<target name="2 - business.prepare" depends="1 - business.clear">
+		<echo>Criando os diretórios da business</echo>
+		<mkdir dir="bin" />
+		<mkdir dir="dist" />
+	</target>
+
+	<target name="3 - business.compile" depends="2 - business.prepare">
+		<echo>Compilando a business</echo>
+		<javac srcdir="src" destdir="bin" debug="on">
+			<classpath>
+				<path refid="server-libs" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="4 - business.make.jar" depends="3 - business.compile">
+		<jar destfile="dist/${jar.file}">
+			<fileset dir="bin">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="5 - business.deploy" depends="4 - business.make.jar">
+		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/lib" />
+		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/templates/aplicacao-j2ee-jboss4/estrutura/lib" />
+		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/templates/aplicacao-j2ee-tomcat/estrutura/WebContent/WEB-INF/lib" />
+		<copy file="dist/${jar.file}" todir="../ProjetoTomcat/WebContent/WEB-INF/lib" />
+		<antcall target="1 - business.clear"></antcall>
+	</target>
+
+</project>
