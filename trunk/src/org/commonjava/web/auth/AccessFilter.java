@@ -41,7 +41,10 @@ public abstract class AccessFilter implements Filter{
 			else
 				filterConfig.getServletContext().getRequestDispatcher(errorPage).forward(request, response);
 		else{
-			request.getSession().setAttribute("org.commonjava.web.auth.requestPage", url);
+			// ignora requests recundários
+			String requestPrimario = request.getHeader("referer");
+			if(requestPrimario==null)
+				request.getSession().setAttribute("org.commonjava.web.auth.requestPage", contextPath+url);
 			filterConfig.getServletContext().getRequestDispatcher(loginPage).forward(request, response);
 		}
 		
