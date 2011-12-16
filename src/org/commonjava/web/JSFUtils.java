@@ -45,8 +45,11 @@ public class JSFUtils {
 	}
 	
 	public static HttpSession getSession(boolean create) {
-		HttpServletRequest request = getRequest();
-		return request.getSession(create);
+		return getRequest().getSession(create);
+	}
+	
+	public static HttpSession getSession() {
+		return getRequest().getSession();
 	}
 	
 	@SuppressWarnings("unchecked")
