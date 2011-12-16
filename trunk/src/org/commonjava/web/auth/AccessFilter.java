@@ -35,13 +35,15 @@ public abstract class AccessFilter implements Filter{
 		
 		if(url.equals(loginPage)||url.equals(errorPage))
 			filterChain.doFilter(servletRequest, servletResponse);
-		else if(isAuthenticated())
-			if(hasPermission())
+		else if(isAuthenticated(request, response))
+			if(hasPermission(request, response))
 				filterChain.doFilter(servletRequest, servletResponse);
 			else
 				filterConfig.getServletContext().getRequestDispatcher(errorPage).forward(request, response);
-		else
+		else{
+			request.getSession().setAttribute("org.commonjava.web.auth.requestPage", url);
 			filterConfig.getServletContext().getRequestDispatcher(loginPage).forward(request, response);
+		}
 		
 		
     }
@@ -52,7 +54,7 @@ public abstract class AccessFilter implements Filter{
 		return filterConfig;
 	}
 	
-	protected abstract boolean isAuthenticated();
-	protected abstract boolean hasPermission();
+	protected abstract boolean isAuthenticated(HttpServletRequest request, HttpServletResponse response);
+	protected abstract boolean hasPermission(HttpServletRequest request, HttpServletResponse response);
 
 }
