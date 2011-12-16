@@ -43,7 +43,9 @@ public abstract class AccessFilter implements Filter{
 		else{
 			// ignora requests recundários
 			String requestPrimario = request.getHeader("referer");
-			if(requestPrimario==null)
+			// quando vem de um action de um form, ele vem com o refer preenchido, então essa segunda parta de expressão
+			// faz com que o logout continue funcionando
+			if(requestPrimario==null || request.getSession().getAttribute("org.commonjava.web.auth.requestPage") ==null)
 				request.getSession().setAttribute("org.commonjava.web.auth.requestPage", contextPath+url);
 			filterConfig.getServletContext().getRequestDispatcher(loginPage).forward(request, response);
 		}
