@@ -53,7 +53,7 @@
 		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/lib" />
 		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/templates/aplicacao-j2ee-jboss4/estrutura/lib" />
 		<copy file="dist/${jar.file}" todir="../AutomatizadorJava/templates/aplicacao-j2ee-tomcat/estrutura/WebContent/WEB-INF/lib" />
-		<copy file="dist/${jar.file}" todir="../ProjetoTomcat/WebContent/WEB-INF/lib" />
+		<copy file="dist/${jar.file}" todir="../BancoQuestoes/WebContent/WEB-INF/lib" />
 		<antcall target="1 - business.clear"></antcall>
 	</target>
 
