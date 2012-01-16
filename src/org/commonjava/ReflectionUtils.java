@@ -1,5 +1,6 @@
 package org.commonjava;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -168,6 +169,40 @@ public class ReflectionUtils {
 		} catch (InvocationTargetException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	public static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClazz) {
+		for (Field field : clazz.getDeclaredFields()) {
+			Annotation ann = field.getAnnotation(annotationClazz);
+			if (ann != null) {
+				return field;
+			}
+		}
+		Class<?> superClazz = clazz.getSuperclass();
+		if (superClazz != null)
+			return getFieldWithAnnotation(superClazz, annotationClazz);
+		return null;
+	}
+	public static Field[] getFieldsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClazz) {
+		ArrayList<Field> fields = new ArrayList<Field>();
+		addFieldsWithAnnotation(clazz, annotationClazz, fields);
+		return fields.toArray(new Field[0]);
+	}
+	private static void addFieldsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClazz, List<Field> fields) {
+		for (Field field : clazz.getDeclaredFields()) {
+			Annotation annotation = field.getAnnotation(annotationClazz);
+			if (annotation != null) {
+				fields.add(field);
+			}
+		}
+		Class<?> superClazz = clazz.getSuperclass();
+		if (superClazz != null) {
+			addFieldsWithAnnotation(superClazz, annotationClazz, fields);
+		}
+	}
+
+	public static Object executeGetterMethod(String name, Object obj) {
+		return execute(obj, getGetterName(name));
 	}
 
 }
