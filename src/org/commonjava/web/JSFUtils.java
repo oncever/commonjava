@@ -1,5 +1,8 @@
 package org.commonjava.web;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
@@ -7,9 +10,12 @@ import javax.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.commonjava.ReflectionUtils;
 
 public class JSFUtils {
 
@@ -85,5 +91,38 @@ public class JSFUtils {
 	
 	public static String getRequestParam(String name) {
 		return getRequest().getParameter(name);
+	}
+
+	/**
+	 * Converte um array de um objeto qualquer para uma lista de selectItems.
+	 * @param objetos a lista de objetos a para ser convertida
+	 * @param labelPropertie a propriedade do objeto que vai ser o label de selectItem. Se esta propriedade for null, o toString ser� usado como label
+	 * @param valuePropertie a propriedade do objeto que vai ser a valor do selectItem. Se esta propriedade for null, o pr�prio objeto ser� usado como value
+	 * @param firstLabel labael padr�o com valor null. Se est� propriedade for null, a lista n�o tera um valor padr�o null.
+	 * @return uma lista de selectItems
+	 * @author Jean Baldessar
+	 */
+	public static List<SelectItem> convertToSelectItem(Object[] objetos, String labelPropertie, String valuePropertie, String firstLabel){
+		List<SelectItem> retorno = new LinkedList<SelectItem>();
+		if (firstLabel!=null) retorno.add(new SelectItem(null, firstLabel) );
+		
+		for (Object item : objetos) {
+			String label = null;
+			if (labelPropertie!=null) {
+				Object labelObject = ReflectionUtils.executeGetterMethod(labelPropertie, item);
+				label = String.valueOf(labelObject);
+			}else {
+				label = item.toString();
+			}
+			
+			Object value = null;
+			if (valuePropertie!=null) {
+				value = ReflectionUtils.executeGetterMethod(valuePropertie, item);
+			}else {
+				value = item;
+			}
+			retorno.add( new SelectItem(value, label) );
+		}
+		return retorno;
 	}
 }
