@@ -20,6 +20,10 @@ public class FacesUtilBack {
 	public List<SelectItem> convertToSelectItem(Object listaOuArray, String label, String value){
 		return convertToSelectItem(listaOuArray, label,value,null);
 	}
+	public List<SelectItem> convertEnumToSelectItem(Object listaOuArray, String label, String value){
+		return convertToSelectItem(listaOuArray, label,null,value);
+	}
+	
 	public List<SelectItem> convertToSelectItem(Object listaOuArray, String label, String valuePropertie, String selecione){
 		if(listaOuArray == null)
 			return JSFUtils.convertToSelectItem(new Object[]{}, label, valuePropertie, selecione);
