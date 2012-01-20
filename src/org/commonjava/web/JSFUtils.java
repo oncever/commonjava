@@ -89,6 +89,12 @@ public class JSFUtils {
 		return Integer.valueOf(parameter);
 	}
 	
+	public static Long getLongRequestParam(String name) {
+		String parameter = getRequest().getParameter(name);
+		if(parameter==null||parameter.isEmpty()) return null;
+		return Long.valueOf(parameter);
+	}
+	
 	public static String getRequestParam(String name) {
 		return getRequest().getParameter(name);
 	}
